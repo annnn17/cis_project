@@ -1,8 +1,8 @@
 swagger: "2.0"
 info:
-  title: "Notes API — Team 07"
+  title: "Notes API — Team 06"
   version: "1.0.0"
-  description: "Простой API для управления заметками (Развертывание на порту 8007)"
+  description: "Простой API для управления заметками (Развертывание на порту 8006)"
 basePath: "/api"
 schemes:
   - "http"

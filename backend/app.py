@@ -7,8 +7,8 @@ app = Flask(__name__)
 CORS(app)
 
 DB_HOST = os.getenv("DB_HOST", "localhost")
-DB_NAME = os.getenv("DB_NAME", "notes_db_07")
-DB_USER = os.getenv("DB_USER", "notes_user_07")
+DB_NAME = os.getenv("DB_NAME", "notes_db_06")
+DB_USER = os.getenv("DB_USER", "notes_user_06")
 DB_PASS = os.getenv("DB_PASS", "password123")
 
 def get_db_connection():
@@ -46,4 +46,4 @@ def add_note():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=5007)
+    app.run(host='127.0.0.1', port=5006)
