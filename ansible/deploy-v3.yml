@@ -1,0 +1,38 @@
+---
+- name: Deploy Project 1 (Version 3 - Containerization with Docker Compose)
+  hosts: webservers
+  become: true
+  vars:
+    # --- НАСТРОЙКИ КОМАНДЫ ---
+    group_code: "06"
+    repo_root: "/opt/project_{{ group_code }}"   # каталог, где на сервере лежит код проекта
+    old_service_name: "project_{{ group_code }}-backend.service"
+    old_nginx_conf: "project_{{ group_code }}.conf"
+
+  tasks:
+    - name: 1. Остановить и полностью отключить старую службу бэкенда на хосте
+      ansible.builtin.systemd:
+        name: "{{ old_service_name }}"
+        state: stopped
+        enabled: false
+      failed_when: false # Игнорировать ошибку, если служба уже удалена или отсутствует
+
+    - name: 2. Удалить старый конфигурационный файл Nginx на хосте
+      ansible.builtin.file:
+        path: "/etc/nginx/sites-enabled/{{ old_nginx_conf }}"
+        state: absent
+
+    # Перечитываем Nginx СРАЗУ (а не через handler в конце), чтобы освободить порт 80GG
+    # до старта контейнеров. state: reloaded — graceful: чужие сайты на этой ВМ не падают.
+    - name: 2b. Перечитать конфигурацию Nginx, чтобы освободить порт 80{{ group_code }} до старта контейнеров
+      ansible.builtin.systemd:
+        name: nginx
+        state: reloaded
+
+    # Без Git: код уже находится на сервере в {{ repo_root }}, поэтому просто собираем
+    # образы и поднимаем контейнеры из файлов, лежащих в этом каталоге.
+    - name: 3. Собрать образы и поднять контейнеры через Docker Compose
+      community.docker.docker_compose_v2:
+        project_src: "{{ repo_root }}"
+        state: present
+        build: always
