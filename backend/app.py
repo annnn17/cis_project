@@ -48,7 +48,7 @@ def add_note():
 @app.route('/api/health', methods=['GET'])
 def health_check():
     # Легковесный эндпоинт для проверки статуса самого Flask-приложения
-    return jsonify({"status": "broken-status"}), 200 
+    return jsonify({"status": "healthy"}), 200 
 
     
 if __name__ == '__main__':
