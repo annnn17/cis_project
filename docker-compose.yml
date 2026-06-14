@@ -43,9 +43,40 @@ services:
     networks:
       - project_06-network
 
+  prometheus:
+    image: prom/prometheus:v2.45.0
+    container_name: project_06-prometheus
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - promdata_06:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    ports:
+      - "9006:9090"
+    depends_on:
+      - backend
+    networks:
+      - project_06-network
+
+  grafana:
+    image: grafana/grafana:10.0.0
+    container_name: project_06-grafana
+    ports:
+      - "3006:3000"
+    volumes:
+      - grafanadata_06:/var/lib/grafana
+    depends_on:
+      - prometheus
+    networks:
+      - project_06-network
+
 volumes:
   pgdata_06:
+  promdata_06:
+  grafanadata_06:
 
 networks:
   project_06-network:
     name: project_06-network
+

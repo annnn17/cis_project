@@ -2,9 +2,13 @@ import os
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import psycopg2
+from prometheus_flask_exporter import PrometheusMetrics
 
 app = Flask(__name__)
 CORS(app)
+
+metrics = PrometheusMetrics(app, path='/api/metrics')
+metrics.info('app_info', 'Application info', version='1.0.0')
 
 DB_HOST = os.getenv("DB_HOST", "localhost")
 DB_NAME = os.getenv("DB_NAME", "notes_db_06")
@@ -53,3 +57,4 @@ def health_check():
     
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
+
